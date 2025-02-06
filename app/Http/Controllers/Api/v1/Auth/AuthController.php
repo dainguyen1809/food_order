@@ -10,8 +10,8 @@ use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-
     private $service;
+
     public function __construct(AuthServiceInterface $service)
     {
         $this->service = $service;

@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\RoleShop;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,9 +17,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('avatar')->nullable();
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->boolean('verify')->default(0); // false
             $table->string('password');
-            $table->string('role')->default('2222');
+            $table->string('roles')->default(RoleShop::SHOP);
             $table->rememberToken();
             $table->timestamps();
         });
