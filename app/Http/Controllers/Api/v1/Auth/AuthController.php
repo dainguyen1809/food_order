@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\v1\Auth;
 
+use App\Enums\HttpStatusCodes;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Services\AuthService;
@@ -21,7 +22,8 @@ class AuthController extends Controller
     {
         return response()->json([
             'message' => 'Registered successfully',
+            'code' => HttpStatusCodes::CREATED,
             'metadata' => $this->service->register($request)
-        ]);
+        ], HttpStatusCodes::CREATED);
     }
 }

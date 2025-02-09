@@ -8,17 +8,17 @@ class KeyToken extends Model
 {
     protected $fillable = [
         'user_id',
-        'publicKey',
-        'privateKey',
-        'refreshToken',
+        'public_key',
+        'private_key',
+        'refresh_token',
     ];
 
     protected $hidden = [
-        'privateKey',
+        'private_key',
     ];
 
     protected $casts = [
-        'refreshToken' => 'array',
+        'refresh_token' => 'array',
     ];
 
     public function User()
