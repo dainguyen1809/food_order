@@ -2,6 +2,7 @@
 
 namespace App\Services\Auth;
 
+use App\Enums\HttpStatusCodes;
 use App\Enums\RoleShop;
 use App\Helpers\AuthHelper;
 use App\Http\Requests\Auth\RegisterRequest;
@@ -19,9 +20,9 @@ class AuthService implements AuthServiceInterface
 
             if ($holderUser) {
                 return response()->json([
-                    'statusCode' => '9999',
+                    'statusCode' => HttpStatusCodes::FORBIDDEN,
                     'message' => 'Email already has been taken!'
-                ]);
+                ], HttpStatusCodes::FORBIDDEN);
             }
 
             $newUser = new User();
@@ -39,8 +40,8 @@ class AuthService implements AuthServiceInterface
 
                 if (! $keyStore) {
                     return response()->json([
-                        'statusCode' => '9999',
-                        'message' => 'Email already has been taken!'
+                        'statusCode' => HttpStatusCodes::FORBIDDEN,
+                        'message' => 'Key invalid!'
                     ]);
                 }
 
@@ -63,6 +64,7 @@ class AuthService implements AuthServiceInterface
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
+                'code' => HttpStatusCodes::BAD_REQUEST,
                 'message' => $e->getMessage()
             ]);
         }

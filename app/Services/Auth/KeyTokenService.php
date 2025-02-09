@@ -11,11 +11,11 @@ class KeyTokenService
         try {
             $tokens = KeyToken::create([
                 'user_id' => $userId,
-                'publicKey' => $publicKey,
-                'privateKey' => $privateKey,
+                'public_key' => $publicKey,
+                'private_key' => $privateKey,
             ]);
 
-            return $tokens ? $tokens->publicKey : null;
+            return $tokens ? $tokens->public_key : null;
 
         } catch (\Exception $e) {
             return response()->json([
