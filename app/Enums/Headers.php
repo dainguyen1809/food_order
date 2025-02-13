@@ -12,5 +12,6 @@ use BenSampo\Enum\Enum;
 final class Headers extends Enum
 {
     const API_KEY = 'x-api-key';
+    const CLIENT_ID = 'x-client-id';
     const AUTHORIZATION = 'authorization';
 }
