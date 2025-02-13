@@ -16,7 +16,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->text('public_key');
             $table->text('private_key');
-            $table->text('refresh_token')->nullable();
+            $table->text('refresh_tokens_used')->nullable();
+            $table->text('refresh_token');
             $table->timestamps();
         });
     }

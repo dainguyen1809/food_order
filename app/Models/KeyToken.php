@@ -10,7 +10,8 @@ class KeyToken extends Model
         'user_id',
         'public_key',
         'private_key',
-        'refresh_token',
+        'refresh_tokens_used',
+        'refresh_token'
     ];
 
     protected $hidden = [
@@ -18,7 +19,7 @@ class KeyToken extends Model
     ];
 
     protected $casts = [
-        'refresh_token' => 'array',
+        'refresh_tokens_used' => 'array',
     ];
 
     public function User()

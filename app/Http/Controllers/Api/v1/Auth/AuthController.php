@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\v1\Auth;
 use App\Enums\HttpStatusCodes;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
-use App\Services\AuthService;
 use App\Services\Contracts\AuthServiceInterface;
 use Illuminate\Http\Request;
 
@@ -16,6 +15,26 @@ class AuthController extends Controller
     public function __construct(AuthServiceInterface $service)
     {
         $this->service = $service;
+    }
+
+    public function logout(Request $request)
+    {
+        return response()->json([
+            'statusCode' => HttpStatusCodes::OK,
+            'message' => 'Logout success',
+            'metadata' => $this->service->logout($request->keyStore),
+        ], HttpStatusCodes::OK);
+    }
+
+    public function login(Request $request)
+    {
+        $metadata = $this->service->login($request);
+
+        $statusCode = $metadata['statusCode'] ?? HttpStatusCodes::OK;
+
+        return response()->json([
+            'metadata' => $metadata,
+        ], $statusCode);
     }
 
     public function register(RegisterRequest $request)
