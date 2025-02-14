@@ -37,6 +37,29 @@ class Authentication
                 ], HttpStatusCodes::NOT_FOUND);
             }
 
+            if ($request->header(Headers::REFRESH_TOKEN)) {
+                try {
+                    $refreshToken = $request->header(Headers::REFRESH_TOKEN);
+                    JWTAuth::setToken($refreshToken);
+                    $decoded = JWTAuth::authenticate();
+
+                    if ($decoded->id !== (int) $userId) {
+                        return response()->json([
+                            'statusCode' => HttpStatusCodes::UNAUTHORIZED,
+                            'message' => 'Unauthorized'
+                        ], HttpStatusCodes::UNAUTHORIZED);
+                    }
+
+                    $request->keyStore = $keyStore;
+                    $request->user = $decoded;
+                    $request->refreshToken = $refreshToken;
+
+                    return $next($request);
+                } catch (\Exception $e) {
+                    throw $e;
+                }
+            }
+
             $accessToken = $request->header(Headers::AUTHORIZATION);
             if (! $accessToken) {
                 return response()->json([

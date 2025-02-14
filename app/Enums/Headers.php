@@ -14,4 +14,5 @@ final class Headers extends Enum
     const API_KEY = 'x-api-key';
     const CLIENT_ID = 'x-client-id';
     const AUTHORIZATION = 'authorization';
+    const REFRESH_TOKEN = 'x-rtoken-id';
 }
