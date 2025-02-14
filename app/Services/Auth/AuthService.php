@@ -6,9 +6,11 @@ use App\Enums\HttpStatusCodes;
 use App\Enums\RoleShop;
 use App\Helpers\AuthHelper;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Models\KeyToken;
 use App\Models\User;
 use App\Services\Contracts\AuthServiceInterface;
 use App\Services\Contracts\UserServiceInterface;
+use App\Services\User\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -21,6 +23,41 @@ class AuthService implements AuthServiceInterface
         $this->service = $service;
     }
 
+    public function refresh($keyStore, $user, $refreshToken)
+    {
+        if ($refreshToken === $keyStore->refresh_token) {
+            KeyTokenService::deleteKeyByUserID($user->id);
+            return [
+                'statusCode' => HttpStatusCodes::UNAUTHORIZED,
+                'message' => 'Something wrong!! Please re-login'
+            ];
+        }
+
+        if ($keyStore->refresh_token !== $refreshToken) {
+            return [
+                'statusCode' => HttpStatusCodes::UNAUTHORIZED,
+                'metadata' => 'Unauthorized'
+            ];
+        }
+
+        $foundUser = $this->service->findUserByEmail($user->email);
+        if (! $foundUser) {
+            return [
+                'statusCode' => HttpStatusCodes::NOT_FOUND,
+                'metadata' => 'User not found!'
+            ];
+        }
+
+        $tokens = AuthHelper::createTokensPair($user);
+
+        KeyToken::where('user_id', $user->id)->update([
+            'refresh_token' => $tokens['refreshToken'],
+            'refresh_tokens_used' => $tokens['refreshToken'],
+        ]);
+
+        return [$user, $tokens];
+
+    }
 
     public function logout($request)
     {

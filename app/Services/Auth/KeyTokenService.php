@@ -30,7 +30,7 @@ class KeyTokenService
 
     public static function findKeyByUserID($userId)
     {
-        $userID = KeyToken::where('id', $userId)->first();
+        $userID = KeyToken::where('user_id', $userId)->first();
 
         return $userID;
     }
@@ -38,6 +38,11 @@ class KeyTokenService
     public static function deleteKeyByID($id)
     {
         return KeyToken::destroy($id);
+    }
+
+    public static function deleteKeyByUserID($userId)
+    {
+        return KeyToken::where('user_id', $userId)->delete();
     }
 
 }

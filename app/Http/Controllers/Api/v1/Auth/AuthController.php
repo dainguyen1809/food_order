@@ -17,6 +17,17 @@ class AuthController extends Controller
         $this->service = $service;
     }
 
+    public function refresh(Request $request)
+    {
+        $refreshToken = $request->refreshToken;
+        $keyStore = $request->keyStore;
+        $user = $request->user;
+
+        return response()->json([
+            'metadata' => $this->service->refresh($keyStore, $user, $refreshToken),
+        ]);
+    }
+
     public function logout(Request $request)
     {
         return response()->json([
