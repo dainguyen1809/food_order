@@ -2,6 +2,7 @@
 
 namespace App\Services\Auth;
 
+use App\Enums\Headers;
 use App\Enums\HttpStatusCodes;
 use App\Enums\RoleShop;
 use App\Helpers\AuthHelper;
@@ -25,7 +26,7 @@ class AuthService implements AuthServiceInterface
 
     public function refresh($keyStore, $user, $refreshToken)
     {
-        if ($refreshToken === $keyStore->refresh_token) {
+        if (in_array($refreshToken, $keyStore->refresh_tokens_used ?? [])) {
             KeyTokenService::deleteKeyByUserID($user->id);
             return [
                 'statusCode' => HttpStatusCodes::UNAUTHORIZED,
@@ -50,10 +51,20 @@ class AuthService implements AuthServiceInterface
 
         $tokens = AuthHelper::createTokensPair($user);
 
-        KeyToken::where('user_id', $user->id)->update([
-            'refresh_token' => $tokens['refreshToken'],
-            'refresh_tokens_used' => $tokens['refreshToken'],
-        ]);
+        $usedTokens = $keyStore->refresh_tokens_used ?? [];
+        $usedTokens[] = $refreshToken;
+
+        $usedTokens = [];
+        $usedTokens[] = $refreshToken; // add new refresh_token to array
+        $keyStore->refresh_tokens_used = $usedTokens;
+        $keyStore->save();
+
+
+        KeyToken::where('user_id', $user->id)
+            ->update([
+                'refresh_token' => $tokens['refreshToken'],
+                'refresh_tokens_used' => $usedTokens,
+            ]);
 
         return [$user, $tokens];
 
