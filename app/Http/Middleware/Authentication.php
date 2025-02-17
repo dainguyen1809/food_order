@@ -33,7 +33,7 @@ class Authentication
             if (! $keyStore) {
                 return response()->json([
                     'statusCode' => HttpStatusCodes::NOT_FOUND,
-                    'message' => 'Key not found' // public key
+                    'message' => 'Key invalid!' // public key
                 ], HttpStatusCodes::NOT_FOUND);
             }
 
