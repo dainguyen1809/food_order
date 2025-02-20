@@ -13,7 +13,8 @@ class ProductController extends Controller
     public function createProduct(CreateProductRequest $request)
     {
         $type = $request->product_type;
-        $data = $request->all();
+        $product_shop = $request->user()->id;
+        $data = array_merge($request->all(), ['product_shop' => $product_shop]);
         $metadata = ProductFactory::createProduct($type, $data);
         $statusCode = $metadata['statusCode'] ?? HttpStatusCodes::CREATED;
 

@@ -68,7 +68,6 @@ class Authentication
                 ], HttpStatusCodes::UNAUTHORIZED);
             }
 
-
             try {
                 JWTAuth::setToken($accessToken);
                 $decoded = JWTAuth::authenticate();
@@ -81,6 +80,7 @@ class Authentication
                 }
 
                 $request->keyStore = $keyStore;
+                $request->user = $decoded;
 
                 return $next($request);
             } catch (\Exception $e) {
