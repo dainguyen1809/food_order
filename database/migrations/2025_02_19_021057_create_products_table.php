@@ -19,12 +19,13 @@ return new class extends Migration
             $table->decimal('product_price', 10, 2);
             $table->integer('product_quantity');
             $table->string('product_type'); // food, drink, dessert, etc
-            $table->foreignId('product_shop')->constrained('users')->onDelete('cascade');
+            $table->foreignId('product_shop')->nullable()->constrained('users')->onDelete('cascade');
             $table->json('product_attributes');
             $table->timestamps();
         });
 
         Schema::create('food', function (Blueprint $table) {
+            // $table->string('product_id');
             $table->string('ingredient');
             $table->string('spiciness');
             $table->string('size');
@@ -32,6 +33,7 @@ return new class extends Migration
         });
 
         Schema::create('drink', function (Blueprint $table) {
+            // $table->string('product_id');
             $table->string('brand');
             $table->string('size');
             $table->string('ingredient');

@@ -4,5 +4,5 @@ namespace App\Services\Contracts;
 
 interface ProductServiceInterface
 {
-    public function createProduct();
+    public function createProduct($product_id = null);
 }

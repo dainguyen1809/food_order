@@ -28,7 +28,7 @@ class CreateProductRequest extends FormRequest
             'product_price' => 'required|numeric|min:0',
             'product_quantity' => 'required|integer|min:0',
             'product_type' => 'required|string|in:food,drink,dessert',
-            'product_shop' => 'required|exists:users,id',
+            'product_shop' => 'exists:users,id',
             'product_attributes' => 'required',
         ];
     }
@@ -48,7 +48,6 @@ class CreateProductRequest extends FormRequest
             'product_quantity.min' => 'The quantity must be greater than or equal to 0.',
             'product_type.required' => 'The product type is required.',
             'product_type.in' => 'The product type must be one of the following: food, drink, or dessert.',
-            'product_shop.required' => 'The shop is required.',
             'product_shop.exists' => 'The selected shop does not exist.',
             'product_attributes.required' => 'The product attributes are required.',
         ];
