@@ -7,9 +7,9 @@ use App\Models\Food;
 
 class FoodService extends ProductService
 {
-    public function createProduct()
+    public function createProduct($product_id = null)
     {
-        $newFood = Food::create($this->product_attributes);
+        $newFood = Food::create(array_merge($this->data['product_attributes'], ['id' => $product_id]));
         if (! $newFood) {
             return [
                 'statusCode' => HttpStatusCodes::BAD_REQUEST,
@@ -17,7 +17,7 @@ class FoodService extends ProductService
             ];
         }
 
-        $newProduct = parent::createProduct();
+        $newProduct = parent::createProduct($newFood->id);
         if (! $newProduct) {
             return [
                 'statusCode' => HttpStatusCodes::BAD_REQUEST,
