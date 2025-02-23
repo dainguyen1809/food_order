@@ -16,11 +16,16 @@ return new class extends Migration
             $table->string('product_name');
             $table->string('product_thumb');
             $table->text('product_description')->nullable();
+            $table->string('product_slug');
+            $table->double('product_rating')->default(4.5);
+            $table->boolean('isDraft')->default(1);
+            $table->boolean('isPublished')->default(0);
             $table->decimal('product_price', 10, 2);
             $table->integer('product_quantity');
             $table->string('product_type'); // food, drink, dessert, etc
             $table->foreignId('product_shop')->nullable()->constrained('users')->onDelete('cascade');
             $table->json('product_attributes');
+            $table->json('product_variation')->nullable();
             $table->timestamps();
         });
 
