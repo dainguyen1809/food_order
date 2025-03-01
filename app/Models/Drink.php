@@ -11,6 +11,7 @@ class Drink extends Model
     use HasFactory, Notifiable;
 
     protected $table = 'drink';
+    public $incrementing = false;
 
     /**
      * The attributes that are mass assignable.
@@ -18,6 +19,7 @@ class Drink extends Model
      * @var list<string>
      */
     protected $fillable = [
+        'id',
         'brand',
         'size',
         'ingredient',

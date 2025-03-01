@@ -10,12 +10,16 @@ class Food extends Model
 {
     use HasFactory, Notifiable;
 
+    protected $table = 'food';
+    public $incrementing = false;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
     protected $fillable = [
+        'id',
         'ingredient',
         'spiciness',
         'size',

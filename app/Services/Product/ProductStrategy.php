@@ -28,6 +28,20 @@ class ProductStrategy
         return (new $productClass($data))->createProduct();
     }
 
+    public static function updateProduct($type, $product_id, $payload)
+    {
+        $productClass = self::$productRegistry[$type];
+
+        if (! class_exists($productClass)) {
+            return [
+                'statusCode' => HttpStatusCodes::BAD_REQUEST,
+                'message' => "Class $productClass does not exist"
+            ];
+        }
+        return (new $productClass($payload))->updateProduct($product_id, $payload);
+    }
+
+
     public static function findAllProductDrafts($product_shop)
     {
         $query = [
@@ -46,6 +60,16 @@ class ProductStrategy
         ];
 
         return ProductRepository::getAllProductIsPublished($query);
+    }
+
+    public static function getAllProducts()
+    {
+        return ProductRepository::getAllProducts();
+    }
+
+    public static function productDetails($product_id)
+    {
+        return ProductRepository::productDetails($product_id);
     }
 
     public static function productSearchByGuest($keySearch)

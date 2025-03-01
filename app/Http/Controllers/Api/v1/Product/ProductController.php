@@ -31,6 +31,22 @@ class ProductController extends Controller
         ], $statusCode);
     }
 
+    public function updateProduct(Request $request)
+    {
+        $product_type = $request->product_type;
+        $product_id = $request->route('product_id');
+        $payload = $request->all();
+        $payload['product_shop'] = $request->user()->id;
+        $metadata = ProductStrategy::updateProduct($product_type, $product_id, $payload);
+        $statusCode = $metadata['statusCode'] ?? HttpStatusCodes::OK;
+
+        return response()->json([
+            'statusCode' => $statusCode,
+            'message' => $statusCode >= 400 ? 'Error' : 'Product updated successfully',
+            'metadata' => $metadata
+        ]);
+    }
+
     public function getAllProductDrafts(Request $request)
     {
         return response()->json([
@@ -45,6 +61,23 @@ class ProductController extends Controller
             'message' => 'Get data successfully',
             'metadata' => ProductStrategy::getAllProductIsPublished($request->user()->id)
         ]);
+    }
+
+    public function getAllProducts()
+    {
+        return response()->json([
+            'message' => 'Get data successfully',
+            'metadata' => ProductStrategy::getAllProducts()
+        ]);
+    }
+
+    public function productDetails(Request $request)
+    {
+        return response()->json([
+            'statusCode' => HttpStatusCodes::OK,
+            'message' => 'Get product details successfully',
+            'metadata' => ProductStrategy::productDetails(Route::input('product_id'))
+        ], HttpStatusCodes::OK);
     }
 
     public function productSearchByGuest(Request $request)

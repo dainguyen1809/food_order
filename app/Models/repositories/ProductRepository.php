@@ -16,6 +16,24 @@ class ProductRepository
         return self::productQuery($query, 'isPublished');
     }
 
+    public static function getAllProducts()
+    {
+        return Product::select([
+            'product_name',
+            'product_thumb',
+            'product_price',
+            'product_quantity',
+        ])
+            ->where('isPublished', true)
+            ->orderBy('updated_at')
+            ->paginate(50);
+    }
+
+    public static function productDetails($product_id)
+    {
+        return Product::where('id', $product_id)->firstOrFail();
+    }
+
     public static function productSearchByGuest($keySearch)
     {
         $products = Product::where('isPublished', true)
@@ -25,6 +43,15 @@ class ProductRepository
 
         return $products;
 
+    }
+
+    public static function updateProductByID($product_id, $payload, $model)
+    {
+        $product = $model::where('id', $product_id)->firstOrFail();
+
+        $product->update($payload);
+
+        return $product->refresh();
     }
 
     public static function updateIsPublishedProduct($product_shop, $product_id)

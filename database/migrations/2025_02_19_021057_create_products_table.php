@@ -30,19 +30,21 @@ return new class extends Migration
         });
 
         Schema::create('food', function (Blueprint $table) {
-            // $table->string('product_id');
+            $table->unsignedBigInteger('id')->nullable();
             $table->string('ingredient');
             $table->string('spiciness');
             $table->string('size');
             $table->timestamps();
+            $table->foreign('id')->references('id')->on('products')->onDelete('cascade');
         });
 
         Schema::create('drink', function (Blueprint $table) {
-            // $table->string('product_id');
+            $table->unsignedBigInteger('id')->nullable();
             $table->string('brand');
             $table->string('size');
             $table->string('ingredient');
             $table->timestamps();
+            $table->foreign('id')->references('id')->on('products')->onDelete('cascade');
         });
 
     }
