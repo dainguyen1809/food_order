@@ -3,6 +3,7 @@
 namespace App\Services\Product;
 
 use App\Models\Product;
+use App\Models\Repositories\InventoryRepository;
 use App\Models\Repositories\ProductRepository;
 use App\Services\Contracts\ProductServiceInterface;
 
@@ -15,9 +16,17 @@ class ProductService implements ProductServiceInterface
         $this->data = $data;
     }
 
-    public function createProduct($product_id)
+    public function createProduct()
     {
-        return Product::create($this->data);
+        $shopID = $this->data['product_shop'];
+        $stock = $this->data['product_quantity'];
+        $newProduct = Product::create($this->data);
+
+        if ($newProduct) {
+            InventoryRepository::insertInventory($newProduct->id, $shopID, $stock);
+        }
+
+        return $newProduct;
     }
 
     public function updateProduct($product_id, $payload)
