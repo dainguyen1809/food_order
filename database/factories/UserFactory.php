@@ -5,40 +5,21 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use App\Models\User;
+use App\Enums\RoleShop; // Ensure this exists or replace it with string roles like 'shop' or 'admin'.
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
- */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
-    protected static ?string $password;
-
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    public function definition()
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'name' => $this->faker->name(),
+            'avatar' => $this->faker->imageUrl(100, 100, 'people'), // Generates random avatar URL
+            'email' => $this->faker->unique()->safeEmail(),
+            'verify' => $this->faker->boolean(30), // 30% chance of being verified
+            'password' => Hash::make('password'), // Default password
+            'roles' => RoleShop::SHOP ?? 'shop', // Replace `RoleShop::SHOP` if not defined
             'remember_token' => Str::random(10),
         ];
-    }
-
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
-    public function unverified(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
-        ]);
     }
 }
