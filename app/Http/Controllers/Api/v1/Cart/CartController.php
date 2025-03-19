@@ -17,7 +17,7 @@ class CartController extends Controller
 
         return response()->json([
             'statusCode' => $statusCode,
-            'message' => $statusCode >= 400 ? 'Error' : 'Created new discount successfully',
+            'message' => $statusCode >= 400 ? 'Error' : 'Product added successfully',
             'metadata' => $metadata
         ], $statusCode);
     }
@@ -25,13 +25,40 @@ class CartController extends Controller
     public function updateCart(Request $request)
     {
 
-        $metadata = CartService::updateCart($request->user_id, $request->shop_order_ids);
+        $metadata = CartService::updateCart($request->user_id, $request->product);
         $statusCode = $metadata['statusCode'] ?? HttpStatusCodes::OK;
 
         return response()->json([
             'statusCode' => $statusCode,
-            'message' => $statusCode >= 400 ? 'Error' : 'Created new discount successfully',
+            'message' => $statusCode >= 400 ? 'Error' : 'Cart updated successfully',
             'metadata' => $metadata
         ], $statusCode);
     }
+
+    public static function getListCartItems(Request $request)
+    {
+        $metadata = CartService::getListCartItems($request->user_id);
+        $statusCode = $metadata['statusCode'] ?? HttpStatusCodes::OK;
+
+        return response()->json([
+            'statusCode' => $statusCode,
+            'message' => $statusCode >= 400 ? 'Error' : 'Cart updated successfully',
+            'metadata' => $metadata
+        ], $statusCode);
+    }
+
+
+    public function removeCartItem(Request $request)
+    {
+
+        $metadata = CartService::removeCartItem($request->user_id, $request->product);
+        $statusCode = $metadata['statusCode'] ?? HttpStatusCodes::OK;
+
+        return response()->json([
+            'statusCode' => $statusCode,
+            'message' => $statusCode >= 400 ? 'Error' : 'Cart updated successfully',
+            'metadata' => $metadata
+        ], $statusCode);
+    }
+
 }

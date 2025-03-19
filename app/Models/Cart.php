@@ -15,7 +15,6 @@ class Cart extends Model
 
     protected $fillable = [
         'cart_status',
-        'cart_products',
         'cart_count_product',
         'cart_user_id',
     ];
@@ -26,8 +25,13 @@ class Cart extends Model
         'updated_at' => 'modified_on',
     ];
 
-    public function User()
+    public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function cartProducts()
+    {
+        return $this->hasMany(CartProduct::class);
     }
 }
