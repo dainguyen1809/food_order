@@ -13,90 +13,9 @@ class CartService implements CartServiceInterface
 {
     public static function addToCart($user_id, $product)
     {
-        // check cart exist
-        $cartUser = CartRepository::checkCartExist($user_id);
 
-        if (! $cartUser) {
-            // create new cart for user
-            $foundProduct = ProductRepository::getProductByID($product['product_id']);
-            if (! $foundProduct) {
-                return [
-                    'statusCode' => HttpStatusCodes::NOT_FOUND,
-                    'message' => "Product doesn't exists!"
-                ];
-            }
-
-            return self::createCartForUser($user_id, $product);
-        }
-
-        // cart exist but without item
-        if (! empty($cartUser->cart_products)) {
-            $cart = array_merge($cartUser->cart_products, $product);
-
-            $updated = $cartUser->update();
-        }
-
-        // if cart exist and contains cart item
-        return self::updateQtyCartItem($user_id, $product);
-    }
-
-    public static function createCartForUser($user_id, $product)
-    {
-        return CartRepository::createCartForUser($user_id, $product);
-    }
-
-    public static function updateQtyCartItem($user_id, $product)
-    {
-        $productID = $product['product_id'];
-        $quantity = $product['quantity'];
-
-        $foundCart = CartRepository::findCartItemByUserID($user_id, $productID);
-
-        if ($foundCart) {
-            $cartProducts = $foundCart->cart_products ?? [];
-            $cartProducts['quantity'] = ($cartProducts['quantity'] ?? 0) + $quantity;
-
-            // Set the modified array back
-            $foundCart->cart_products = $cartProducts;
-            $foundCart->save();
-
-            return $foundCart;
-        }
-
-        return self::createCartForUser($user_id, $product);
-    }
-
-    /*
-        {
-            "user_id": 1809,
-            "shop_orders_ids": [
-            {
-                "shop_id": "67ae13e3a2dbc857bd22b4ff",
-                "item_products": [
-                {
-                    "product_id": "67b8482dad65634805d72a84",
-                    "quantity": 5,
-                    "old_quantity": 11,
-                    "price": 149.99
-                }
-                ],
-                "version": 2000
-            }
-            ]
-        }
-     */
-
-    public static function updateCart($user_id, $shop_order_ids)
-    {
-        $obj = (object) $shop_order_ids[0];
-
-        $data = [
-            'product_id' => $obj->cart_item[0]['product_id'],
-            'quantity' => $obj->cart_item[0]['quantity'],
-            'old_quantity' => $obj->cart_item[0]['old_quantity'],
-        ];
-
-        $foundProduct = ProductRepository::getProductByID($data['product_id']);
+        //valid product
+        $foundProduct = ProductRepository::getProductByID($product['product_id']);
         if (! $foundProduct) {
             return [
                 'statusCode' => HttpStatusCodes::NOT_FOUND,
@@ -104,24 +23,88 @@ class CartService implements CartServiceInterface
             ];
         }
 
-        if ($foundProduct->product_shop !== $shop_order_ids[0]['shop_id']) {
+        // init cart user if doesn't exists
+        $cartUser = CartRepository::findCartOrCreate($user_id);
+
+        // check product exist in the cart
+        $cart_id = $cartUser->id;
+        $cartProduct = CartRepository::checkProductExistInCart($cart_id, $product);
+
+        if ($cartProduct) {
+            $cartProduct->increment('quantity', $product['quantity']);
+        } else {
+            return CartRepository::insertItemInCart($cart_id, $product);
+        }
+
+        return $cartUser->load('cartProducts');
+    }
+
+    public static function updateCart($user_id, $product)
+    {
+        $cart = CartRepository::checkCartExists($user_id);
+        if (! $cart) {
+            return [
+                'statusCode' => HttpStatusCodes::NOT_FOUND,
+                'message' => 'Cart not found'
+            ];
+        }
+
+        // check product exist in the cart
+        $cart_id = $cart->id;
+        $cartProduct = CartRepository::checkProductExistInCart($cart_id, $product);
+
+        if (! $cartProduct) {
+            return self::addToCart($user_id, $product);
+        }
+
+        $foundProduct = ProductRepository::getProductByID($product['product_id']);
+        if (! $foundProduct) {
+            return [
+                'statusCode' => HttpStatusCodes::NOT_FOUND,
+                'message' => "Product doesn't exists!"
+            ];
+        }
+
+        if ($cartProduct->shop_id !== $product['shop_id']) {
             return [
                 'statusCode' => HttpStatusCodes::CONFLICT,
                 'message' => "This product do not belong to the shop!"
             ];
         }
 
-        if ($data['quantity'] === 0) {
-            // self::deleteCart
+        if ($cartProduct->quantity > 0) {
+            $cartProduct->update([
+                'quantity' => $product['quantity']
+            ]);
+        } else {
+            // remove
         }
 
-        $product = [
-            'product_id' => $data['product_id'],
-            'quantity' => $data['quantity'] - $data['old_quantity']
-        ];
-
-        $updated = self::updateQtyCartItem($user_id, $product);
-        return $updated;
+        return $cart->load('cartProducts');
     }
 
+    public static function getListCartItems($user_id)
+    {
+        return CartRepository::getListCartItems($user_id);
+    }
+
+    public static function removeCartItem($user_id, $product)
+    {
+        $cart = CartRepository::checkCartExists($user_id);
+        if (! $cart) {
+            return [
+                'statusCode' => HttpStatusCodes::NOT_FOUND,
+                'message' => 'Cart not found'
+            ];
+        }
+
+        $deleted = CartRepository::removeCartItem($cart->id, $product);
+
+        // if item === 0 => delete cart
+        if ($cart->cartProducts()->count() === 0) {
+            $cart->delete();
+        }
+
+        return $deleted > 0;
+    }
 }

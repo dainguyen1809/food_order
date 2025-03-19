@@ -14,8 +14,6 @@ return new class extends Migration
         Schema::create('carts', function (Blueprint $table) {
             $table->id();
             $table->string('cart_status');
-            $table->json('cart_products');
-            $table->integer('cart_count_product')->default(0);
             $table->unsignedBigInteger('cart_user_id');
             $table->timestamp('created_on')->nullable();
             $table->timestamp('modified_on')->nullable();
