@@ -8,6 +8,14 @@ use App\Models\CartProduct;
 
 class CartRepository
 {
+    public static function getCartByID($cart_id)
+    {
+        return Cart::where('id', $cart_id)
+            ->where('cart_status', CartStatus::ACTIVE)
+            ->with(['cartProducts:cart_id,product_id,quantity,shop_id'])
+            ->first();
+    }
+
     public static function findCartOrCreate($user_id)
     {
         return Cart::firstOrCreate([

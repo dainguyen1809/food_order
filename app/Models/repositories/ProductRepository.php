@@ -50,6 +50,18 @@ class ProductRepository
         return Product::where('id', $product_id)->where('isPublished', true)->first();
     }
 
+    public static function getProductAvailable($product_id)
+    {
+        return Product::where('id', $product_id)
+            ->where('isPublished', true)
+            ->select([
+                'id as product_id',
+                'product_price as price',
+                'product_quantity as quantity',
+            ])->get();
+    }
+
+
     public static function updateProductByID($product_id, $payload, $model)
     {
         $product = $model::where('id', $product_id)->firstOrFail();
