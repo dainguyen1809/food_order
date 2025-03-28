@@ -157,7 +157,7 @@ class DiscountService implements DiscountServiceInterface
         }
 
         // validate discount expired
-        if (date('Y-m-d H:i:s') < $discount->discount_start_date && date('Y-m-d H:i:s') > $discount->discount_end_date) {
+        if (date('Y-m-d H:i:s') < $discount->discount_start_date || date('Y-m-d H:i:s') > $discount->discount_end_date) {
             return [
                 'statusCode' => HttpStatusCodes::BAD_REQUEST,
                 'message' => 'Discount already expired!'
@@ -218,12 +218,12 @@ class DiscountService implements DiscountServiceInterface
             }
         }
 
-        $amout = $discount->discount_type === Discount::FIXED_AMOUNT ? $discount->discount_value : $totalOrders * ($discount->discount_value / 100);
+        $amount = $discount->discount_type === Discount::FIXED_AMOUNT ? $discount->discount_value : $totalOrders * ($discount->discount_value / 100);
 
         return [
             'price' => $totalOrders,
-            'discount codes' => $amout,
-            'total amount' => $totalOrders - $amout
+            'discount codes' => $amount,
+            'total amount' => $totalOrders - $amount
         ];
     }
 

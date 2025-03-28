@@ -83,6 +83,9 @@ class CheckoutService implements CheckoutServiceInterface
                             })
                     ]);
 
+                    if (isset($getDiscount['statusCode']))
+                        return $getDiscount; // Return error immediately
+
                     $discount = $getDiscount['total amount'];
                     $checkoutOrder['totalDiscount'] += $discount;
 

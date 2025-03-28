@@ -127,6 +127,38 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
 
+        'error_logs' => [
+            'driver' => 'daily',
+            'via' => App\Logs\CustomLogger::class,
+            'path' => storage_path('logs/error.log'),
+            'level' => 'error',
+            'days' => 30,
+        ],
+
+        'warning_logs' => [
+            'driver' => 'daily',
+            'via' => App\Logs\CustomLogger::class,
+            'path' => storage_path('logs/warning.log'),
+            'level' => 'warning',
+            'days' => 30,
+        ],
+
+        'info_logs' => [
+            'driver' => 'daily',
+            'via' => App\Logs\CustomLogger::class,
+            'path' => storage_path('logs/info.log'),
+            'level' => 'info',
+            'days' => 30,
+        ],
+
+        'debug_logs' => [
+            'driver' => 'daily',
+            'via' => App\Logs\CustomLogger::class,
+            'path' => storage_path('logs/debug.log'),
+            'level' => 'debug',
+            'days' => 30,
+        ],
+
     ],
 
 ];
