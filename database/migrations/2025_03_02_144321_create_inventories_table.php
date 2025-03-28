@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('inven_shopID')->nullable()->constrained('users')->onDelete('cascade');
             $table->foreignId('inven_productID')->nullable()->constrained('products')->onDelete('cascade');
             $table->string('inven_location')->default('unknown');
-            $table->integer('inven_stock');
+            $table->integer('inven_stock')->default(0);
             $table->json('inven_reservation')->nullable();
             $table->timestamps();
         });
