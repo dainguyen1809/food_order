@@ -40,3 +40,28 @@
     └───────────────────────────┘
 
 ```
+
+# Comments
+
+-   Formula delete comment
+
+```
+  width = right - left + 1
+  width ==> 8 - 3 + 1 = 6 (border)
+```
+
+```flowchart
+Comment 1
+│
+├── comment 1.1
+│   ├── comment 1.1.1
+│       ├── comment 1.1.1.1
+│       └── comment 1.1.1.2
+│
+└── comment 1.2
+    ├── comment 1.2.1
+    │   ├── comment 1.2.1.1
+    │   └── comment 1.2.1.2
+    ├── comment 1.2.2
+    └── comment 1.2.3
+```
