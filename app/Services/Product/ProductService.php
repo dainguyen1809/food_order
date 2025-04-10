@@ -2,10 +2,12 @@
 
 namespace App\Services\Product;
 
+use App\Enums\NotifyTypes;
 use App\Models\Product;
 use App\Models\Repositories\InventoryRepository;
 use App\Models\Repositories\ProductRepository;
 use App\Services\Contracts\ProductServiceInterface;
+use App\Services\Notification\NotificationService;
 
 class ProductService implements ProductServiceInterface
 {
@@ -25,6 +27,16 @@ class ProductService implements ProductServiceInterface
         if ($newProduct) {
             InventoryRepository::insertInventory($newProduct->id, $shopID, $stock);
         }
+
+        NotificationService::pushNotifyToSystem([
+            'notify_type' => NotifyTypes::SHOP_001,
+            'notify_senderId' => $this->data['product_shop'],
+            'notify_receiverId' => 1,
+            'notify_options' => [
+                'product_name' => $this->data['product_name'],
+                'shop_name' => $this->data['product_shop'],
+            ]
+        ]);
 
         return $newProduct;
     }
