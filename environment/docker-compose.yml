@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+    rabbitmq:
+        image: rabbitmq:3-management
+        container_name: food_order-rabbitmq_container
+        ports:
+            - "5672:5672"
+            - "15672:15672"
+        environment:
+            RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+            RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+        volumes:
+            - food_order-rabbitmq_data:/var/lib/rabbitmq
+        networks:
+            - food_order-network
+
+networks:
+    food_order-network:
+        driver: bridge
+
+volumes:
+    food_order-rabbitmq_data:
