@@ -11,7 +11,7 @@ services:
             RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
             RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
         volumes:
-            - food_order-rabbitmq_data:/var/lib/rabbitmq
+            - ./food_order-rabbitmq_data:/var/lib/rabbitmq
         networks:
             - food_order-network
 
