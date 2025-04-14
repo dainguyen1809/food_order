@@ -159,6 +159,14 @@ return [
             'days' => 30,
         ],
 
+        'rabbitmq_logs' => [
+            'driver' => 'daily',
+            'via' => App\Logs\CustomLogger::class,
+            'path' => storage_path('logs/rabbitmq/rabbitmq-logging.log'),
+            'level' => 'info',
+            'days' => 14,
+        ],
+
     ],
 
 ];
