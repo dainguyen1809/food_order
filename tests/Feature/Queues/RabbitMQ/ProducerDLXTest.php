@@ -50,7 +50,7 @@ class ProducerDLXTest extends TestCase
         ]);
 
 
-        $channel->basic_publish($msg, '', $notificationQueue);
+        $channel->basic_publish($msg, $notificationExchange, '');
 
         $channel->close();
         $connection->close();
