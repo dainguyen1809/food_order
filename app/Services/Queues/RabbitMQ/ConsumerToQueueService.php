@@ -15,15 +15,43 @@ class ConsumerToQueueService
 
             $notificationQueue = 'notificationQueueProcess';
 
-            $delay = 15; // seconds
-            echo "⏳ Waiting $delay seconds before consuming...\n";
-            sleep($delay);
+            /**
+             * The case simulates TTL of the message
+             */
+
+            // $delay = 15; // seconds
+            // echo "⏳ Waiting $delay seconds before consuming...\n";
+            // sleep($delay);
+
+            // $channel->basic_consume($notificationQueue, '', false, false, false, false, function ($msg) use ($channel) {
+            //     $now = now()->format('H:i:s d/m/Y');
+            //     echo "[$now] Processed: ".$msg->body."\n";
+            //     $channel->basic_ack($msg->delivery_info['delivery_tag']);
+            // });
+
+            /**
+             * The cas simulates the process where sending the messages fails
+             */
 
             $channel->basic_consume($notificationQueue, '', false, false, false, false, function ($msg) use ($channel) {
-                $now = now()->format('H:i:s d/m/Y');
-                echo "[$now] Processed: ".$msg->body."\n";
-                $channel->basic_ack($msg->delivery_info['delivery_tag']);
+                try {
+                    $random = rand(0, 10);
+                    if ($random < 7) {
+                        echo "number: $random";
+                        echo "\nThis message: $msg->body fails in the process of sending \n";
+                        return false;
+                    }
+
+                    echo "\nSend notification to the queue successfully: $msg->body\n";
+                    $channel->basic_ack($msg->delivery_info['delivery_tag']);
+
+                } catch (\Exception $e) {
+                    echo "\nSend message to the queue fails: $msg->body. Please hot fix !!!\n";
+                    $channel->basic_nack($msg->delivery_info['delivery_tag'], false, false);
+                    \Log::channel('rabbitmq_logs')->error($e->getMessage());
+                }
             });
+
 
             while ($channel->is_consuming()) {
                 $channel->wait();
@@ -55,7 +83,7 @@ class ConsumerToQueueService
 
             $queueInfo = $channel->queue_declare($queueHotFix, false, true, false, false);
 
-            $channel->queue_bind($queueHotFix, $dlxExchange, $dlxRoutingKey);
+            $channel->queue_bind($queueInfo[0], $dlxExchange, $dlxRoutingKey);
 
             $channel->basic_consume($queueHotFix, '', false, true, false, false, function ($msg) use ($channel) {
                 $now = now()->format('H:i:s d/m/Y');
